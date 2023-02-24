@@ -7,16 +7,20 @@
  * board fills (tie)
  */
 
-
-// What are the instance variables you’ll need on the Game?
-// Make a constructor that sets default values for these
-// Move the current functions onto the class as methods
+class Player {
+  constructor(name, color, number) {
+    this.name = name;
+    this.color = color;
+    this.number = number;
+  }
+}
 
 class Game {
-  constructor(height = 6, width = 7) {
+  constructor(height = 6, width = 7, players) {
     this.height = height;
     this.width = width;
-    this.currPlayer = 1;
+    this.players = players;
+    this.currPlayer = this.players[0];
     this.board = [];
 
     this.boundHandleClick = this.handleClick.bind(this);
@@ -24,8 +28,10 @@ class Game {
     this.makeHtmlBoard();
   }
 
-  /** makeBoard: create in-JS board structure:
-   *   board = array of rows, each row is array of cells  (board[y][x])
+  /**
+   * makeBoard: create in-JS board structure:
+   * board = array of rows, each row is array of cells  (board[y][x])
+   *
   */
 
   makeBoard() {
@@ -34,39 +40,41 @@ class Game {
     }
   }
 
-  /** makeHtmlBoard: make HTML table and row of column tops. */
+  /**
+   * makeHtmlBoard: make HTML table and row of column tops.
+   * */
 
   makeHtmlBoard() {
-  console.log('makeHtmlBoard called');
-  const htmlBoard = document.getElementById('board');
-  htmlBoard.innerHTML = "";
+    console.info('makeHtmlBoard called');
+    const htmlBoard = document.getElementById('board');
+    htmlBoard.innerHTML = "";
 
-  // make column tops (clickable area for adding a piece to that column)
-  const top = document.createElement('tr');
-  top.setAttribute('id', 'column-top');
-  top.addEventListener('click', this.boundHandleClick);
-
-  for (let x = 0; x < this.width; x++) {
-    const headCell = document.createElement('td');
-    headCell.setAttribute('id', x);
-    top.append(headCell);
-  }
-
-  htmlBoard.append(top);
-
-  // make main part of board
-  for (let y = 0; y < this.height; y++) {
-    const row = document.createElement('tr');
+    // make column tops (clickable area for adding a piece to that column)
+    const top = document.createElement('tr');
+    top.setAttribute('id', 'column-top');
+    top.addEventListener('click', this.boundHandleClick);
 
     for (let x = 0; x < this.width; x++) {
-      const cell = document.createElement('td');
-      cell.setAttribute('id', `c-${y}-${x}`);
-      row.append(cell);
+      const headCell = document.createElement('td');
+      headCell.setAttribute('id', x);
+      top.append(headCell);
     }
 
-    htmlBoard.append(row);
+    htmlBoard.append(top);
+
+    // make main part of board
+    for (let y = 0; y < this.height; y++) {
+      const row = document.createElement('tr');
+
+      for (let x = 0; x < this.width; x++) {
+        const cell = document.createElement('td');
+        cell.setAttribute('id', `c-${y}-${x}`);
+        row.append(cell);
+      }
+
+      htmlBoard.append(row);
+    }
   }
-}
 
   /** findSpotForCol: given column x, return top empty y (null if filled) */
 
@@ -84,15 +92,16 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    piece.classList.add(`p${this.currPlayer.number}`);
     piece.style.top = -50 * (y + 2);
+    piece.style.backgroundColor = this.currPlayer.color;
 
 
     const spot = document.getElementById(`c-${y}-${x}`);
-    console.log('spot', spot);
-    console.log('x', x);
-    console.log('y', y);
-    console.log('board', this.board)
+    console.info('spot', spot);
+    console.info('x', x);
+    console.info('y', y);
+    console.info('board', this.board);
     spot.append(piece);
   }
 
@@ -100,7 +109,7 @@ class Game {
 
   endGame(msg) {
     alert(msg);
-    console.warn('removing event listener from this: ', this);
+    console.info('removing event listener from this: ', this);
     const top = document.getElementById('column-top');
     top.removeEventListener('click', this.boundHandleClick);
   }
@@ -108,27 +117,26 @@ class Game {
   /** handleClick: handle click of column top to play piece */
 
   handleClick(evt) {
-    console.log('handleClick', 'evt: ', evt);
+    console.info('handleClick', 'evt: ', evt);
     // get x from ID of clicked cell
     const x = +evt.target.id;
 
     // get next spot in column (if none, ignore click)
-    console.log('this: ', this);
-    console.log('this.findSpotForCol(x): ', this.findSpotForCol(x));
+    console.info('this: ', this);
     const y = this.findSpotForCol(x);
     if (y === null) {
       return;
     }
 
     // place piece in board and add to HTML table
-    this.board[y][x] = this.currPlayer;
+    this.board[y][x] = this.currPlayer.number;
     this.placeInTable(y, x);
 
-    console.log('about to checkForWin');
+    console.info('about to checkForWin');
     // check for win
     if (this.checkForWin()) {
 
-      return this.endGame(`Player ${this.currPlayer} won!`);
+      return this.endGame(`Player ${this.currPlayer.name} won!`);
     }
 
     // check for tie
@@ -137,27 +145,12 @@ class Game {
     }
 
     // switch players
-    this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+    this.currPlayer = this.currPlayer.number === 1 ? this.players[1] : this.players[0];
   }
 
   /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
   checkForWin() {
-    // function _win(cells, gameObj) {
-    //   // Check four cells to see if they're all color of current player
-    //   //  - cells: list of four (y, x) cells
-    //   //  - returns true if all are legal coordinates & all match currPlayer
-
-
-    //   return cells.every(
-    //     ([y, x]) =>
-    //       y >= 0 &&
-    //       y < gameObj.height &&
-    //       x >= 0 &&
-    //       x < gameObj.width &&
-    //       gameObj.board[y][x] === gameObj.currPlayer
-    //   );
-    // }
 
     function _win(cells) {
       // Check four cells to see if they're all color of current player
@@ -171,16 +164,14 @@ class Game {
           y < this.height &&
           x >= 0 &&
           x < this.width &&
-          this.board[y][x] === this.currPlayer
+          this.board[y][x] === this.currPlayer.number
       );
     }
-      console.log('this', this)
-      // const boundWin = _win.bind(this)
+    console.info('this', this);
 
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
-        // get "check list" of 4 cells (starting here) for each of the different
-        // ways to win
+        // get "check list" of 4 cells (starting here) for each way to win
         const horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
         const vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
         const diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
@@ -188,17 +179,37 @@ class Game {
 
         // find winner (only checking each win-possibility as needed)
         //if (boundWin(horiz) || boundWin (vert) )
-        if (_win.call(this, horiz) || _win.call(this, vert) || _win.call(this, diagDR) || _win.call(this, diagDL)) {
+        if (_win.call(this, horiz) ||
+          _win.call(this, vert) ||
+          _win.call(this, diagDR) ||
+          _win.call(this, diagDL)) {
           return true;
         }
       }
     }
   }
-
 }
 
-const newGameButton = document.getElementById('startGame');
-newGameButton.addEventListener('click', function () {
-  const newGame = new Game (6, 7);
+/* Attach Click Event to New Game Button ------------------------------------ */
+const newGameButton = document.getElementById('start-game');
+newGameButton.addEventListener('click', function (event) {
+  event.preventDefault();
+
+  let p1name = document.getElementById('player1-name');
+  const p1color = document.getElementById('player1-color');
+  console.info('p1color: ', p1color);
+
+  let p2name = document.getElementById('player2-name');
+  const p2color = document.getElementById('player2-color');
+  console.info('p2color: ', p2color);
+
+  if (!p1name) p1name = { value: 'P1' };
+  if (!p2name) p2name = { value: 'P2' };
+
+  const playerOne = new Player(p1name.value, p1color.value, 1);
+  const playerTwo = new Player(p2name.value, p2color.value, 2);
+  console.info('playerOne created: ', playerOne);
+  console.info('playerTwo created: ', playerTwo);
+  const newGame = new Game(6, 7, [playerOne, playerTwo]);
+
 });
-// const newGame = new Game(6, 7);

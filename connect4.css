@@ -15,14 +15,6 @@
   border-radius: 50%;
 }
 
-.piece.p1 {
-  background-color: red;
-}
-
-.piece.p2 {
-  background-color: blue;
-}
-
 /* column-top is table row of clickable areas for each column */
 
 #column-top td {
@@ -31,4 +23,32 @@
 
 #column-top td:hover {
   background-color: gold;
+}
+
+#player-fiorm-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#player-settings-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+#player-settings {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+#player-settings input {
+  padding: 5px;
+  margin: 5px;
+}
+
+#player-settings-title {
+  font-weight: bold;
+
 }

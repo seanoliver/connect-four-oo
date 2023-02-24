@@ -5,7 +5,38 @@
 </head>
 <body>
 
-<button id="startGame">New Game</button>
+<form id="player-form">
+  <div id="player-form-container">
+    <div id="player-settings-container">
+      <div id="player-settings">
+        <p id="player-settings-title">Player 1</p>
+        <div>
+          <label>Name</label>
+          <input id="player1-name" type="text" placeholder="Name">
+        </div>
+        <div>
+          <label>Color</label>
+          <input id="player1-color" type="color" placeholder="Color" value="#0089fc">
+        </div>
+
+      </div>
+      <div id="player-settings">
+        <p id="player-settings-title">Player 2</p>
+        <div>
+          <label>Name</label>
+          <input id="player2-name" type="text" placeholder="Name">
+        </div>
+        <div>
+          <label>Color</label>
+          <input id="player2-color" type="color" placeholder="Color" value="#ff4647">
+        </div>
+      </div>
+    </div>
+    <button id="start-game">New Game</button>
+  </div>
+</form>
+
+
 <div id="game">
   <table id="board"></table>
 </div>
