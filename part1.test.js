@@ -33,7 +33,7 @@ describe('makeHtmlBoard', function () {
 
     // num rows should be HEIGHT + 1 to account for clickable top row
     expect(htmlBoard.rows.length).toEqual(testGame.height + 1);
-
+    console.log('htmlBoard', htmlBoard);
     for (const tableRow of htmlBoard.rows) {
       expect(tableRow.cells.length).toEqual(testGame.width);
     }
