@@ -24,6 +24,7 @@ class Game {
     this.board = [];
 
     this.boundHandleClick = this.handleClick.bind(this);
+    this.resetPlayers(this.players);
     this.makeBoard();
     this.makeHtmlBoard();
   }
@@ -93,7 +94,6 @@ class Game {
     const piece = document.createElement('div');
     piece.classList.add('piece');
     piece.classList.add(`p${this.currPlayer.number}`);
-    piece.style.top = -50 * (y + 2);
     piece.style.backgroundColor = this.currPlayer.color;
 
 
@@ -108,10 +108,30 @@ class Game {
   /** endGame: announce game end */
 
   endGame(msg) {
-    alert(msg);
+    if (msg !== 'Tie!') {
+      const winFlag = document.getElementById(`p${this.currPlayer.number}-win`);
+      winFlag.style.display = 'inline';
+    }
+
+    const outcomeMessage = document.getElementById('outcome-message');
+    outcomeMessage.innerText = msg;
+
     console.info('removing event listener from this: ', this);
     const top = document.getElementById('column-top');
     top.removeEventListener('click', this.boundHandleClick);
+  }
+
+  /**
+   * Reset the appearance of the players on the game board (win flags and
+   * player names)
+   */
+
+  resetPlayers(players) {
+    document.getElementById('player1-settings-title').innerText = players[0].name;
+    document.getElementById('player2-settings-title').innerText = players[1].name;
+
+    document.getElementById('p1-win').style.display = 'none';
+    document.getElementById('p2-win').style.display = 'none';
   }
 
   /** handleClick: handle click of column top to play piece */
@@ -136,7 +156,7 @@ class Game {
     // check for win
     if (this.checkForWin()) {
 
-      return this.endGame(`Player ${this.currPlayer.name} won!`);
+      return this.endGame(`${this.currPlayer.name} won!`);
     }
 
     // check for tie
@@ -197,14 +217,19 @@ newGameButton.addEventListener('click', function (event) {
 
   let p1name = document.getElementById('player1-name');
   const p1color = document.getElementById('player1-color');
+  console.info('p1name: ', p1name);
   console.info('p1color: ', p1color);
 
   let p2name = document.getElementById('player2-name');
   const p2color = document.getElementById('player2-color');
+  console.info('p2name: ', p2name);
   console.info('p2color: ', p2color);
 
-  if (!p1name) p1name = { value: 'P1' };
-  if (!p2name) p2name = { value: 'P2' };
+  if (!p1name.value) p1name = { value: 'P1' };
+  if (!p2name.value) p2name = { value: 'P2' };
+
+  console.info('p1name: ', p1name);
+  console.info('p2name: ', p2name);
 
   const playerOne = new Player(p1name.value, p1color.value, 1);
   const playerTwo = new Player(p2name.value, p2color.value, 2);
