@@ -1,6 +1,6 @@
 # Object-Oriented Connect Four
 
-![Connect Four](connect-four-midjourney.png)
+![Connect Four](connect-four-midjourney.png "A dystopian game of Connect Four, imagined by Midjourney AI.")
 
 This is a version of the classic Connect Four game rebuilt for the browser in HTML, CSS, and JavaScript using an object-oriented design paradigm.
 
